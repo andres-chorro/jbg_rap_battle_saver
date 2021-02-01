@@ -12,19 +12,19 @@ if destination_folder.exists():
     if i.lower() != 'y':
         exit()
 
+destination_folder.mkdir(parents=True, exist_ok=True)
+
 response = requests.get(BASE_URL + battle_id)
 data = response.json()
 rounds = data['gameData']
 
 for r in rounds:
     round_name = r['title']
-    round_dir = destination_folder / round_name
-    round_dir.mkdir(parents=True, exist_ok=True)
     for c in r['children']:
         player_name = c['title']
-        image_uri = BASE_IMG_URL + c['twitterOptions']['imageGifUri']
-        file_path = destination_folder / round_name / (player_name + '.gif')
+        file_path = destination_folder / (round_name + '_' + player_name + '.gif')
 
+        image_uri = BASE_IMG_URL + c['twitterOptions']['imageGifUri']
         print(f'Downloading {round_name} image for {player_name}: {image_uri}')
         content = requests.get(image_uri).content
         file_path.write_bytes(content)
